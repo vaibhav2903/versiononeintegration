@@ -168,7 +168,7 @@ public class CreateDefectAPI {
 	}
 
 	public void getAttachment(String id, String project) {
-		id = "44187";
+		//id = "44187";
 		Client client = ClientBuilder.newClient();
 		Response response = client
 				.target(APP_PROPERTIES.getProperty("com.experitest.base-url") + "/reporter/api/" + id + "/attachments")
