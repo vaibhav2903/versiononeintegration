@@ -1,6 +1,9 @@
 com\experitest\versiononeintegration\CreateDefectAPI$ReportInfo.class
 com\experitest\versiononeintegration\CreateDefectAPI.class
 com\experitest\versiononeintegration\ReporterDataService.class
+com\experitest\versiononeintegration\UtilClass.class
 com\experitest\versiononeintegration\CreateDefectAPI$ReportObject.class
+com\experitest\versiononeintegration\TestWatcherClass.class
+com\experitest\versiononeintegration\UpdateTestAPI.class
 com\experitest\versiononeintegration\RunClass.class
-com\experitest\versiononeintegration\App.class
+com\experitest\versiononeintegration\TEST_STATUS.class

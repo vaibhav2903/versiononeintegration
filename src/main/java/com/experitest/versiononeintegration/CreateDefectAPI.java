@@ -39,21 +39,21 @@ public class CreateDefectAPI {
 //	String authorizationHeaderValueCloud = "Basic "
 //			+ java.util.Base64.getEncoder().encodeToString(userPassCloud.getBytes());
 
-	public String convertToBasicAuth(String user, String pass) {
-		return "Basic " + java.util.Base64.getEncoder().encodeToString((user + ":" + pass).getBytes());
-	}
-
-	public String[] convertBasicAuthToString(String token) {
-		String[] tokenn = token.split(" ");
-		byte[] bytesUserPass = java.util.Base64.getDecoder().decode(tokenn[1]);
-		String userPass = new String(bytesUserPass);
-		String[] userpass = userPass.split(":");
-		return userpass;
-	}
+//	public String convertToBasicAuth(String user, String pass) {
+//		return "Basic " + java.util.Base64.getEncoder().encodeToString((user + ":" + pass).getBytes());
+//	}
+//
+//	public String[] convertBasicAuthToString(String token) {
+//		String[] tokenn = token.split(" ");
+//		byte[] bytesUserPass = java.util.Base64.getDecoder().decode(tokenn[1]);
+//		String userPass = new String(bytesUserPass);
+//		String[] userpass = userPass.split(":");
+//		return userpass;
+//	}
 
 	public void addNewAssetWithAttachment(ReportObject object, String errorMessage, String assetType) throws Exception {
 
-		String[] userPass = convertBasicAuthToString(APP_PROPERTIES.getProperty("com.cv1.basicauthtoken"));
+		String[] userPass = UtilClass.convertBasicAuthToString(APP_PROPERTIES.getProperty("com.cv1.basicauthtoken"));
 		V1Connector connector = V1Connector.withInstanceUrl(APP_PROPERTIES.getProperty("com.experitest-cv1.base-url"))
 				.withUserAgentHeader("AppName", "1.0").withUsernameAndPassword("admin", "admin")
 				// .withUserAgentHeader("AppName", "1.0").withUsernameAndPassword(userPass[0],
@@ -122,7 +122,7 @@ public class CreateDefectAPI {
 
 	public void addReportToCV1(String url, String errorMessage, String assetType) throws Exception {
 		APP_PROPERTIES.load(new FileReader("src/test/resources/app.properties"));
-		ReportInfo info = extractProjectAndReportId(url);
+		ReportInfo info = UtilClass.extractProjectAndReportId(url);
 		ReportObject rj = getReportInfo(info.id, info.project);
 		addNewAssetWithAttachment(rj, errorMessage, assetType);
 	}
@@ -168,7 +168,7 @@ public class CreateDefectAPI {
 	}
 
 	public void getAttachment(String id, String project) {
-		//id = "44187";
+		// id = "44187";
 		Client client = ClientBuilder.newClient();
 		Response response = client
 				.target(APP_PROPERTIES.getProperty("com.experitest.base-url") + "/reporter/api/" + id + "/attachments")
@@ -177,53 +177,33 @@ public class CreateDefectAPI {
 
 		if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 			InputStream is = response.readEntity(InputStream.class);
-			fetchFeed(is);
+			UtilClass.fetchFeed(is,APP_PROPERTIES.getProperty("com.experitest-cv1.tempfile.location"));
 			IOUtils.closeQuietly(is);
 		}
 	}
 
-	private void fetchFeed(InputStream is) {
-		File downloadfile = new File(APP_PROPERTIES.getProperty("com.experitest-cv1.tempfile.location"));
-		FileOutputStream fos = null;
-		try {
-			byte[] byteArray = IOUtils.toByteArray(is);
-			fos = new FileOutputStream(downloadfile);
-			fos.write(byteArray);
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		} finally {
-			try {
-				fos.flush();
-				fos.close();
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-	}
+//	private void fetchFeed(InputStream is) {
+//		File downloadfile = new File(APP_PROPERTIES.getProperty("com.experitest-cv1.tempfile.location"));
+//		FileOutputStream fos = null;
+//		try {
+//			byte[] byteArray = IOUtils.toByteArray(is);
+//			fos = new FileOutputStream(downloadfile);
+//			fos.write(byteArray);
+//		} catch (Exception e) {
+//			System.out.println(e.toString());
+//		} finally {
+//			try {
+//				fos.flush();
+//				fos.close();
+//			} catch (Exception e) {
+//				System.out.println(e.toString());
+//			}
+//		}
+//	}
 
 	static class ReportInfo {
 		String id;
 		String project;
-	}
-
-	public ReportInfo extractProjectAndReportId(String url) {
-		int x = 0;
-		for (int i = 0; i < 6; i++) {
-			x = url.indexOf('/');
-			url = url.substring(x + 1);
-		}
-		x = url.indexOf('/');
-		String id = url.substring(0, x);
-		url = url.substring(x + 1);
-		x = url.indexOf('/');
-		url = url.substring(x + 1);
-		x = url.indexOf('/');
-		String project = url.substring(0, x);
-		ReportInfo reportInfo = new ReportInfo();
-		reportInfo.id = id;
-		reportInfo.project = project;
-		System.out.println(id + " ," + project);
-		return reportInfo;
 	}
 
 }
